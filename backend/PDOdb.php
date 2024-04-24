@@ -50,6 +50,7 @@ class PDODatabaseManager
 
     //upload new english description about specific seed type
     public function postEnglishDescription($seed_type,$description){
+        //连接数据库
         try {
             $connection = new PDO(
                 "mysql:host=$this->serverName;dbname=$this->databaseName",
@@ -73,7 +74,7 @@ class PDODatabaseManager
             }
             $connection = null;
         } catch (PDOException $exception) {
-            return null;
+            echo "Connection failed";
         }
         return $result;
     }
