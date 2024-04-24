@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- ask user if they want to get or post information about seeds-->
+<vxml version="2.1">
+
+    <form>
+        <block>
+            <!-- Check whether caller is looking to give or receive information. -->
+            <prompt>Please choose if you want to receive or give information about seeds.</prompt>
+            <field name="userChoice">
+                <!-- 两种方式 dtmf和voice               -->
+                <grammar mode="dtmf" root="dtmfInfoChoices"/>
+                <grammar mode="voice" root="voiceInfoChoices"/>
+                <prompt>
+                    Say or press 1 to post information on seeds you have in stock.
+                    Say or press 2 to get information on available seeds.
+                </prompt>
+                <filled>
+                    <!-- Redirect to post_seed_info.xml if they have chosen to post info -->
+                    <if cond="userChoice == '1' || userChoice == 'one'">
+                        <assign name="selectedChoice" expr="'post'" />
+                        <goto next="post_seed_info.xml"/>
+                    </if>
+                    <!-- Redirect to get_seed_info.xml if they have chosen to get info -->
+                    <if cond="userChoice == '2' || userChoice == 'two'">
+                        <assign name="selectedChoice" expr="'get'" />
+                        <goto next="get_seed_info.xml"/>
+                    </if>
+                    <!-- Response if input doesn't match anything -->
+                    <prompt>Invalid choice.</prompt>
+                </filled>
+            </field>
+        </block>
+    </form>
+
+    <!-- Press key -->
+    <grammar root="dtmfInfoChoices">
+        <rule id="dtmfInfoChoices">
+            <one-of>
+                <item>1</item>
+                <item>2</item>
+            </one-of>
+        </rule>
+    </grammar>
+
+    <!-- Speak value -->
+    <grammar root="voiceInfoChoices">
+        <rule id="voiceInfoChoices">
+            <one-of>
+                <item>one</item>
+                <item>two</item>
+            </one-of>
+        </rule>
+    </grammar>
+</vxml>
