@@ -75,7 +75,7 @@ class PDODatabaseManager
             }
             $connection = null;
         } catch (PDOException $exception) {
-            echo "Connection failed";
+            return null;
         }
         return $result;
     }
