@@ -1,4 +1,4 @@
-//使用 PDO 连接数据库
+//使用 PDO 与数据库交互
 <?php
 
 class PDODatabaseManager
@@ -8,7 +8,7 @@ class PDODatabaseManager
     private string $userPassword;
     private string $databaseName;
 
-    //connect to db
+    //构造函数，初始化信息
     public function __construct($serverName, $userName, $userPassword, $databaseName)
     {
         $this->serverName = $serverName;
@@ -18,7 +18,7 @@ class PDODatabaseManager
         //echo "db connected successfully";
     }
 
-    //upload new spanish description about specific seed type
+    //上传法语信息
     public function postFDescription($seed_type,$description){
         try {
             $connection = new PDO(
@@ -48,7 +48,7 @@ class PDODatabaseManager
         return $result;
     }
 
-    //upload new english description about specific seed type
+    //上传英文信息
     public function postEnglishDescription($seed_type,$description){
         //连接数据库
         try {
@@ -57,16 +57,17 @@ class PDODatabaseManager
                 $this->userName,
                 $this->userPassword
             );
-
+            // 准备sql语句
+            
             $statement = $connection->prepare(
                 "INSERT INTO vxml_table (language_id, seed_type_id, recording_description)
                     SELECT t1.id, t2.id, :descr
                     FROM languages t1, seed_types t2
                     WHERE t1.language = 'english' AND t2.seed_type = :seedT");
+            //将参数绑定到预处理语句中的占位符上
             $statement->bindParam(":seedT", $seed_type);
             $statement->bindParam(":descr", $description);
             $statement->execute();
-            //$statement->setFetchMode(PDO::FETCH_ASSOC);
             $result = "ADDED";
 
             if ($result == false) {
