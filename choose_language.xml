@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.1">
+<!--   定义一个 VoiceXML 表单 -->
   <form>
+<!--     定义一个语音块 -->
     <block>
       <prompt>Please choose a language:</prompt>
+<!--       定义一个输入字段 -->
       <field name="userChoice">
         <!-- Press key -->
         <grammar mode="dtmf" root="dtmfLanguageChoices"/>
         <!-- Speak value -->
         <grammar mode="voice" root="voiceLanguageChoices"/>
         <prompt>Press 1 for English or say "English". Press 2 for French or say "French".</prompt>
+<!--         定义用户输入后的处理逻辑 -->
         <filled>
           <!-- Redirect to english or french based on user's choice -->
           <if cond="userChoice == '1' || userChoice == 'english'">
@@ -25,6 +29,7 @@
   </form>
 
   <!-- Press key -->
+<!--   定义 DTMF 语法 -->
   <grammar root="dtmfLanguageChoices">
     <rule id="dtmfLanguageChoices">
       <one-of>
@@ -35,6 +40,7 @@
   </grammar>
 
   <!-- Speak value -->
+<!--   定义语音识别语法 -->
   <grammar root="voiceLanguageChoices">
     <rule id="voiceLanguageChoices">
       <one-of>
