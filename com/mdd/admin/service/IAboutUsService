@@ -1,0 +1,21 @@
+package com.mdd.admin.service;
+
+import com.mdd.admin.validate.AboutUsCreateValidate;
+import com.mdd.admin.validate.AboutUsSearchValidate;
+import com.mdd.admin.validate.AboutUsUpdateValidate;
+import com.mdd.admin.validate.commons.PageValidate;
+import com.mdd.admin.vo.AboutUsDetailVo;
+import com.mdd.admin.vo.AboutUsListedVo;
+import com.mdd.common.core.PageResult;
+
+public interface IAboutUsService {
+    public PageResult<AboutUsListedVo> list(PageValidate var1, AboutUsSearchValidate var2);
+
+    public AboutUsDetailVo detail(Integer var1);
+
+    public void add(AboutUsCreateValidate var1);
+
+    public void edit(AboutUsUpdateValidate var1);
+
+    public void del(Integer var1);
+}
