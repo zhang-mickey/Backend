@@ -1,0 +1,82 @@
+package com.mdd.admin.crontab;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.binarywang.wxpay.bean.merchanttransfer.DetailsQueryResult;
+import com.mdd.common.entity.user.User;
+import com.mdd.common.entity.withdraw.WithdrawApply;
+import com.mdd.common.enums.ClientEnum;
+import com.mdd.common.enums.LogEarningsEnum;
+import com.mdd.common.enums.WithdrawEnum;
+import com.mdd.common.mapper.log.LogEarningsMapper;
+import com.mdd.common.mapper.user.UserMapper;
+import com.mdd.common.mapper.withdraw.WithdrawApplyMapper;
+import com.mdd.common.plugin.wechat.WxPayDriver;
+import com.mdd.common.plugin.wechat.request.TransferQueryRequest;
+import com.mdd.common.util.ConfigUtils;
+import com.mdd.common.util.TimeUtils;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+
+@Component(value="wechatTransferJob")
+public class WechatTransferJob {
+    @Resource
+    UserMapper userMapper;
+    @Resource
+    LogEarningsMapper logEarningsMapper;
+    @Resource
+    WithdrawApplyMapper withdrawApplyMapper;
+    @Resource
+    DataSourceTransactionManager transactionManager;
+    @Resource
+    TransactionDefinition transactionDefinition;
+
+    public void handle() {
+        Map config = ConfigUtils.get("withdraw");
+        Integer transferWayConfig = Integer.parseInt(config.getOrDefault("transferWay", "1"));
+        if (!transferWayConfig.equals(1)) {
+            return;
+        }
+        List applyList = this.withdrawApplyMapper.selectList((Wrapper)((QueryWrapper)((QueryWrapper)new QueryWrapper().eq("type", WithdrawEnum.TYPE_WECHAT_CHANGE.getCode())).eq("status", WithdrawEnum.STATUS_ING.getCode())).eq("is_delete", 0));
+        if (applyList.size() <= 0) {
+            return;
+        }
+        TransactionStatus transactionStatus = this.transactionManager.getTransaction(this.transactionDefinition);
+        try {
+            for (WithdrawApply apply : applyList) {
+                TransferQueryRequest transferQueryRequest = new TransferQueryRequest();
+                transferQueryRequest.setTerminal(ClientEnum.MNP.getCode());
+                transferQueryRequest.setOutBatchNo(apply.getBatchNo());
+                transferQueryRequest.setOutDetailNo(apply.getSn());
+                DetailsQueryResult queryResult = WxPayDriver.transferQuery(transferQueryRequest);
+                if (queryResult.getDetailStatus().equals("SUCCESS")) {
+                    apply.setStatus(WithdrawEnum.STATUS_SUCCESS.getCode());
+                    apply.setPaySearchResult(queryResult.toString());
+                    apply.setPaymentNo(queryResult.getDetailId());
+                    apply.setPaymentTime(TimeUtils.dateToTimestamp(queryResult.getUpdateTime()));
+                    apply.setUpdateTime(System.currentTimeMillis() / 1000L);
+                    this.withdrawApplyMapper.updateById(apply);
+                }
+                if (!queryResult.getDetailStatus().equals("FAIL")) continue;
+                apply.setStatus(WithdrawEnum.STATUS_FAIL.getCode());
+                apply.setPaySearchResult(queryResult.toString());
+                apply.setUpdateTime(System.currentTimeMillis() / 1000L);
+                this.withdrawApplyMapper.updateById(apply);
+                User user = (User)this.userMapper.selectById(apply.getUserId());
+                user.setEarnings(user.getEarnings().add(apply.getMoney()));
+                user.setUpdateTime(System.currentTimeMillis() / 1000L);
+                this.userMapper.updateById(user);
+                this.logEarningsMapper.add(user.getId(), LogEarningsEnum.UE_INC_PAYMENT_FAIL.getCode(), apply.getMoney(), apply.getId(), apply.getSn(), LogEarningsEnum.UE_INC_PAYMENT_FAIL.getMsg(), null);
+            }
+            this.transactionManager.commit(transactionStatus);
+        }
+        catch (Exception e) {
+            this.transactionManager.rollback(transactionStatus);
+        }
+    }
+}
