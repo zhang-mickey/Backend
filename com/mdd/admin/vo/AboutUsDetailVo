@@ -1,0 +1,189 @@
+package com.mdd.admin.vo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+
+@ApiModel(value="关于我们详情Vo")
+public class AboutUsDetailVo
+implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @ApiModelProperty(value="")
+    private Integer id;
+    @ApiModelProperty(value="商务合作")
+    private String cooperation;
+    @ApiModelProperty(value="广告投放")
+    private String advertising;
+    @ApiModelProperty(value="客服热线")
+    private String customer;
+    @ApiModelProperty(value="服务时间（工作日）")
+    private String workdayTime;
+    @ApiModelProperty(value="服务时间（节假日）")
+    private String holidaysTime;
+    @ApiModelProperty(value="公司地址")
+    private String address;
+    @ApiModelProperty(value="创建者")
+    private String creator;
+    @ApiModelProperty(value="修改者")
+    private String mender;
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public String getCooperation() {
+        return this.cooperation;
+    }
+
+    public String getAdvertising() {
+        return this.advertising;
+    }
+
+    public String getCustomer() {
+        return this.customer;
+    }
+
+    public String getWorkdayTime() {
+        return this.workdayTime;
+    }
+
+    public String getHolidaysTime() {
+        return this.holidaysTime;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public String getCreator() {
+        return this.creator;
+    }
+
+    public String getMender() {
+        return this.mender;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setCooperation(String cooperation) {
+        this.cooperation = cooperation;
+    }
+
+    public void setAdvertising(String advertising) {
+        this.advertising = advertising;
+    }
+
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
+
+    public void setWorkdayTime(String workdayTime) {
+        this.workdayTime = workdayTime;
+    }
+
+    public void setHolidaysTime(String holidaysTime) {
+        this.holidaysTime = holidaysTime;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public void setMender(String mender) {
+        this.mender = mender;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof AboutUsDetailVo)) {
+            return false;
+        }
+        AboutUsDetailVo other = (AboutUsDetailVo)o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        Integer this$id = this.getId();
+        Integer other$id = other.getId();
+        if (this$id == null ? other$id != null : !((Object)this$id).equals(other$id)) {
+            return false;
+        }
+        String this$cooperation = this.getCooperation();
+        String other$cooperation = other.getCooperation();
+        if (this$cooperation == null ? other$cooperation != null : !this$cooperation.equals(other$cooperation)) {
+            return false;
+        }
+        String this$advertising = this.getAdvertising();
+        String other$advertising = other.getAdvertising();
+        if (this$advertising == null ? other$advertising != null : !this$advertising.equals(other$advertising)) {
+            return false;
+        }
+        String this$customer = this.getCustomer();
+        String other$customer = other.getCustomer();
+        if (this$customer == null ? other$customer != null : !this$customer.equals(other$customer)) {
+            return false;
+        }
+        String this$workdayTime = this.getWorkdayTime();
+        String other$workdayTime = other.getWorkdayTime();
+        if (this$workdayTime == null ? other$workdayTime != null : !this$workdayTime.equals(other$workdayTime)) {
+            return false;
+        }
+        String this$holidaysTime = this.getHolidaysTime();
+        String other$holidaysTime = other.getHolidaysTime();
+        if (this$holidaysTime == null ? other$holidaysTime != null : !this$holidaysTime.equals(other$holidaysTime)) {
+            return false;
+        }
+        String this$address = this.getAddress();
+        String other$address = other.getAddress();
+        if (this$address == null ? other$address != null : !this$address.equals(other$address)) {
+            return false;
+        }
+        String this$creator = this.getCreator();
+        String other$creator = other.getCreator();
+        if (this$creator == null ? other$creator != null : !this$creator.equals(other$creator)) {
+            return false;
+        }
+        String this$mender = this.getMender();
+        String other$mender = other.getMender();
+        return !(this$mender == null ? other$mender != null : !this$mender.equals(other$mender));
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof AboutUsDetailVo;
+    }
+
+    public int hashCode() {
+        int PRIME = 59;
+        int result = 1;
+        Integer $id = this.getId();
+        result = result * 59 + ($id == null ? 43 : ((Object)$id).hashCode());
+        String $cooperation = this.getCooperation();
+        result = result * 59 + ($cooperation == null ? 43 : $cooperation.hashCode());
+        String $advertising = this.getAdvertising();
+        result = result * 59 + ($advertising == null ? 43 : $advertising.hashCode());
+        String $customer = this.getCustomer();
+        result = result * 59 + ($customer == null ? 43 : $customer.hashCode());
+        String $workdayTime = this.getWorkdayTime();
+        result = result * 59 + ($workdayTime == null ? 43 : $workdayTime.hashCode());
+        String $holidaysTime = this.getHolidaysTime();
+        result = result * 59 + ($holidaysTime == null ? 43 : $holidaysTime.hashCode());
+        String $address = this.getAddress();
+        result = result * 59 + ($address == null ? 43 : $address.hashCode());
+        String $creator = this.getCreator();
+        result = result * 59 + ($creator == null ? 43 : $creator.hashCode());
+        String $mender = this.getMender();
+        result = result * 59 + ($mender == null ? 43 : $mender.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "AboutUsDetailVo(id=" + this.getId() + ", cooperation=" + this.getCooperation() + ", advertising=" + this.getAdvertising() + ", customer=" + this.getCustomer() + ", workdayTime=" + this.getWorkdayTime() + ", holidaysTime=" + this.getHolidaysTime() + ", address=" + this.getAddress() + ", creator=" + this.getCreator() + ", mender=" + this.getMender() + ")";
+    }
+}
