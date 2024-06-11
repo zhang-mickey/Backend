@@ -1,0 +1,51 @@
+package com.mdd.admin.crontab;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mdd.admin.service.IOrderManageService;
+import com.mdd.common.entity.order.Order;
+import com.mdd.common.enums.OrderEnum;
+import com.mdd.common.enums.OrderLogEnum;
+import com.mdd.common.enums.PaymentEnum;
+import com.mdd.common.mapper.log.LogOrderMapper;
+import com.mdd.common.mapper.order.OrderMapper;
+import com.mdd.common.util.ConfigUtils;
+import com.mdd.common.util.TimeUtils;
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Component;
+
+@Component(value="orderConfirmJob")
+public class OrderConfirmJob {
+    @Resource
+    OrderMapper orderMapper;
+    @Resource
+    LogOrderMapper logOrderMapper;
+    @Resource
+    IOrderManageService iOrderManageService;
+
+    public void handle() {
+        try {
+            float autoConfirmReceiptDay = Float.parseFloat(ConfigUtils.get("trade", "autoConfirmReceiptDay", "-1"));
+            if (autoConfirmReceiptDay == -1.0f) {
+                return;
+            }
+            float confirmTime = autoConfirmReceiptDay * 24.0f * 60.0f * 60.0f;
+            List list = this.orderMapper.selectList((Wrapper)((QueryWrapper)((QueryWrapper)new QueryWrapper().eq("order_status", OrderEnum.ORDER_STATUS_TAKE_DELIVER.getCode())).eq("pay_is", PaymentEnum.OK_PAID.getCode())).lt("express_time + " + confirmTime, TimeUtils.timestamp()));
+            if (list.isEmpty()) {
+                return;
+            }
+            for (Order order : list) {
+                order.setOrderStatus(OrderEnum.ORDER_STATUS_COMPLETED.getCode());
+                order.setConfirmTime(System.currentTimeMillis() / 1000L);
+                order.setAfterDeadline(this.iOrderManageService.getAfterSaleDeadline());
+                this.orderMapper.updateById(order);
+                Integer channel = OrderLogEnum.CHANNEL_ADMIN_CANCEL_ORDER.getCode();
+                this.logOrderMapper.add(order.getId(), OrderLogEnum.TYPE_SYSTEM.getCode(), channel, 0, OrderLogEnum.getValue(channel));
+            }
+        }
+        catch (Exception exception) {
+            // empty catch block
+        }
+    }
+}
