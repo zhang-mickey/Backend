@@ -1,0 +1,70 @@
+package com.mdd.admin.controller.goods;
+
+import com.alibaba.fastjson2.JSONArray;
+import com.mdd.admin.service.IGoodsCategoryService;
+import com.mdd.admin.validate.commons.IdValidate;
+import com.mdd.admin.validate.goods.GoodsCategoryCreateValidate;
+import com.mdd.admin.validate.goods.GoodsCategoryUpdateValidate;
+import com.mdd.admin.vo.goods.GoodsCategoryVo;
+import com.mdd.common.core.AjaxResult;
+import com.mdd.common.validator.annotation.IDMust;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import javax.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value={"api/goods/goodsCategory"})
+@Api(tags={"商品分类管理"})
+public class GoodsCategoryController {
+    @Resource
+    IGoodsCategoryService iGoodsCategoryService;
+
+    @GetMapping(value={"/list"})
+    @ApiOperation(value="分类列表")
+    public AjaxResult<JSONArray> goodsCategoryList() {
+        JSONArray list = this.iGoodsCategoryService.list();
+        return AjaxResult.success(list);
+    }
+
+    @GetMapping(value={"/detail"})
+    @ApiOperation(value="分类详情")
+    public AjaxResult<GoodsCategoryVo> detail(@Validated @IDMust @RequestParam(value="id") Integer id) {
+        GoodsCategoryVo detail = this.iGoodsCategoryService.detail(id);
+        return AjaxResult.success(detail);
+    }
+
+    @PostMapping(value={"/add"})
+    @ApiOperation(value="分类新增")
+    public AjaxResult<Object> add(@Validated @RequestBody GoodsCategoryCreateValidate goodsCategoryCreateValidate) {
+        this.iGoodsCategoryService.add(goodsCategoryCreateValidate);
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/edit"})
+    @ApiOperation(value="分类编辑")
+    public AjaxResult<Object> edit(@Validated @RequestBody GoodsCategoryUpdateValidate goodsCategoryUpdateValidate) {
+        this.iGoodsCategoryService.edit(goodsCategoryUpdateValidate);
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/del"})
+    @ApiOperation(value="分类删除")
+    public AjaxResult<Object> del(@Validated @RequestBody IdValidate idValidate) {
+        this.iGoodsCategoryService.del(idValidate.getId());
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/change"})
+    @ApiOperation(value="分类状态")
+    public AjaxResult<Object> change(@Validated @RequestBody IdValidate idValidate) {
+        this.iGoodsCategoryService.change(idValidate.getId());
+        return AjaxResult.success();
+    }
+}
