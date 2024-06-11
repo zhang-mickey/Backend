@@ -8,13 +8,33 @@ SQL 的 LIKE 也能实现匹配
 倒排索引怎么构建的呢？当我们往 ES 写入商品记录的时候，ES 会先对需要搜索的字段，也就是商品标题进行分词。然后以分词为索引组成一个查找树，这样就把一个全文匹配的查找转换成了对树的查找，这是倒排索引能够快速进行搜索的根本原因。
 
 但是，倒排索引相比于一般数据库采用的 B 树索引，它的写入和更新性能都比较差，因此倒排索引也只是适合全文搜索，不适合更新频繁的交易类数据。
+
+
+##   class 反编译 
+.java 文件经过 JAVA编译器（javac）编译成中间代码字节码 .class 文件
+### javap命令
+ javap -c -l LikeAdminApplication.class 
+
+### Recaf
+
+
+### JD-GUI
+
+## Java Agent机制
+
+
 # spring boost
 Spring Initializr Java Support
 
 
 lsof -i :8080 显示占用8080端口的进程信息
 
+## META-INF
 
+## BOOT-INF
+Spring Boot应用程序从Boot-INF文件夹加载
+
+应用程序类放在嵌套的BOOT-INF/classes目录中。依赖关系放在嵌套的BOOT-INF/lib目录中
 ## JDBC Java DataBase Connectivity
 使用Java程序访问数据库时，Java代码并不是直接通过TCP连接去访问数据库，而是通过JDBC接口来访问，而JDBC接口则通过JDBC驱动来实现真正对数据库的访问
 ![image](https://github.com/zhang-mickey/android/assets/145342600/efe4ba38-451e-4082-91ce-ff8b6fbe0c7e)
@@ -51,7 +71,7 @@ HTTP 协议有一个缺陷：通信只能由客户端发起   做不到服务器
 
 **setter方法**
 
-##   class 反编译 
-JD-GUI
 
-.java 文件经过 JAVA编译器（javac）编译成中间代码字节码 .class 文件
+
+
+
