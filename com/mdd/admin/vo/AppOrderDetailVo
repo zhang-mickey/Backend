@@ -1,0 +1,429 @@
+package com.mdd.admin.vo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+@ApiModel(value="快递订单提交详情Vo")
+public class AppOrderDetailVo
+implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @ApiModelProperty(value="主键ID")
+    private Integer id;
+    @ApiModelProperty(value="用户名")
+    private String username;
+    @ApiModelProperty(value="订单编号")
+    private String ordernum;
+    @ApiModelProperty(value="用户ID")
+    private Integer userid;
+    @ApiModelProperty(value="收件人姓名")
+    private String recmanname;
+    @ApiModelProperty(value="收件人号码")
+    private String recmanmobile;
+    @ApiModelProperty(value="收件人地址")
+    private String recmanprintaddr;
+    @ApiModelProperty(value="寄件人姓名")
+    private String sendmanname;
+    @ApiModelProperty(value="寄件人电话号码")
+    private String sendmanmobile;
+    @ApiModelProperty(value="寄件人地址")
+    private String sendmanprintaddr;
+    @ApiModelProperty(value="物品类别")
+    private String cargoname;
+    @ApiModelProperty(value="物品重量")
+    private String weight;
+    @ApiModelProperty(value="快递公司编码")
+    private String kuaidicom;
+    @ApiModelProperty(value="预约时间，1：今天，2：明天，3：后天")
+    private Integer daytype;
+    @ApiModelProperty(value="预约上门开始时间")
+    private String pickupstarttime;
+    @ApiModelProperty(value="预约上门结束时间")
+    private String pickupendtime;
+    @ApiModelProperty(value="支付金额")
+    private BigDecimal payprice;
+    @ApiModelProperty(value="支付状态，0:未支付【提交订单时默认为0】，1：已支付，2：未支付，3：已取消")
+    private Integer paystatus;
+    @ApiModelProperty(value="支付方式")
+    private String paytype;
+    @ApiModelProperty(value="支付订单号")
+    private String payordernum;
+    @ApiModelProperty(value="")
+    private Date createtime;
+    @ApiModelProperty(value="")
+    private Date paytime;
+    @ApiModelProperty(value="备注，说明")
+    private String remark;
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String getOrdernum() {
+        return this.ordernum;
+    }
+
+    public Integer getUserid() {
+        return this.userid;
+    }
+
+    public String getRecmanname() {
+        return this.recmanname;
+    }
+
+    public String getRecmanmobile() {
+        return this.recmanmobile;
+    }
+
+    public String getRecmanprintaddr() {
+        return this.recmanprintaddr;
+    }
+
+    public String getSendmanname() {
+        return this.sendmanname;
+    }
+
+    public String getSendmanmobile() {
+        return this.sendmanmobile;
+    }
+
+    public String getSendmanprintaddr() {
+        return this.sendmanprintaddr;
+    }
+
+    public String getCargoname() {
+        return this.cargoname;
+    }
+
+    public String getWeight() {
+        return this.weight;
+    }
+
+    public String getKuaidicom() {
+        return this.kuaidicom;
+    }
+
+    public Integer getDaytype() {
+        return this.daytype;
+    }
+
+    public String getPickupstarttime() {
+        return this.pickupstarttime;
+    }
+
+    public String getPickupendtime() {
+        return this.pickupendtime;
+    }
+
+    public BigDecimal getPayprice() {
+        return this.payprice;
+    }
+
+    public Integer getPaystatus() {
+        return this.paystatus;
+    }
+
+    public String getPaytype() {
+        return this.paytype;
+    }
+
+    public String getPayordernum() {
+        return this.payordernum;
+    }
+
+    public Date getCreatetime() {
+        return this.createtime;
+    }
+
+    public Date getPaytime() {
+        return this.paytime;
+    }
+
+    public String getRemark() {
+        return this.remark;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setOrdernum(String ordernum) {
+        this.ordernum = ordernum;
+    }
+
+    public void setUserid(Integer userid) {
+        this.userid = userid;
+    }
+
+    public void setRecmanname(String recmanname) {
+        this.recmanname = recmanname;
+    }
+
+    public void setRecmanmobile(String recmanmobile) {
+        this.recmanmobile = recmanmobile;
+    }
+
+    public void setRecmanprintaddr(String recmanprintaddr) {
+        this.recmanprintaddr = recmanprintaddr;
+    }
+
+    public void setSendmanname(String sendmanname) {
+        this.sendmanname = sendmanname;
+    }
+
+    public void setSendmanmobile(String sendmanmobile) {
+        this.sendmanmobile = sendmanmobile;
+    }
+
+    public void setSendmanprintaddr(String sendmanprintaddr) {
+        this.sendmanprintaddr = sendmanprintaddr;
+    }
+
+    public void setCargoname(String cargoname) {
+        this.cargoname = cargoname;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public void setKuaidicom(String kuaidicom) {
+        this.kuaidicom = kuaidicom;
+    }
+
+    public void setDaytype(Integer daytype) {
+        this.daytype = daytype;
+    }
+
+    public void setPickupstarttime(String pickupstarttime) {
+        this.pickupstarttime = pickupstarttime;
+    }
+
+    public void setPickupendtime(String pickupendtime) {
+        this.pickupendtime = pickupendtime;
+    }
+
+    public void setPayprice(BigDecimal payprice) {
+        this.payprice = payprice;
+    }
+
+    public void setPaystatus(Integer paystatus) {
+        this.paystatus = paystatus;
+    }
+
+    public void setPaytype(String paytype) {
+        this.paytype = paytype;
+    }
+
+    public void setPayordernum(String payordernum) {
+        this.payordernum = payordernum;
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
+    }
+
+    public void setPaytime(Date paytime) {
+        this.paytime = paytime;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof AppOrderDetailVo)) {
+            return false;
+        }
+        AppOrderDetailVo other = (AppOrderDetailVo)o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        Integer this$id = this.getId();
+        Integer other$id = other.getId();
+        if (this$id == null ? other$id != null : !((Object)this$id).equals(other$id)) {
+            return false;
+        }
+        Integer this$userid = this.getUserid();
+        Integer other$userid = other.getUserid();
+        if (this$userid == null ? other$userid != null : !((Object)this$userid).equals(other$userid)) {
+            return false;
+        }
+        Integer this$daytype = this.getDaytype();
+        Integer other$daytype = other.getDaytype();
+        if (this$daytype == null ? other$daytype != null : !((Object)this$daytype).equals(other$daytype)) {
+            return false;
+        }
+        Integer this$paystatus = this.getPaystatus();
+        Integer other$paystatus = other.getPaystatus();
+        if (this$paystatus == null ? other$paystatus != null : !((Object)this$paystatus).equals(other$paystatus)) {
+            return false;
+        }
+        String this$username = this.getUsername();
+        String other$username = other.getUsername();
+        if (this$username == null ? other$username != null : !this$username.equals(other$username)) {
+            return false;
+        }
+        String this$ordernum = this.getOrdernum();
+        String other$ordernum = other.getOrdernum();
+        if (this$ordernum == null ? other$ordernum != null : !this$ordernum.equals(other$ordernum)) {
+            return false;
+        }
+        String this$recmanname = this.getRecmanname();
+        String other$recmanname = other.getRecmanname();
+        if (this$recmanname == null ? other$recmanname != null : !this$recmanname.equals(other$recmanname)) {
+            return false;
+        }
+        String this$recmanmobile = this.getRecmanmobile();
+        String other$recmanmobile = other.getRecmanmobile();
+        if (this$recmanmobile == null ? other$recmanmobile != null : !this$recmanmobile.equals(other$recmanmobile)) {
+            return false;
+        }
+        String this$recmanprintaddr = this.getRecmanprintaddr();
+        String other$recmanprintaddr = other.getRecmanprintaddr();
+        if (this$recmanprintaddr == null ? other$recmanprintaddr != null : !this$recmanprintaddr.equals(other$recmanprintaddr)) {
+            return false;
+        }
+        String this$sendmanname = this.getSendmanname();
+        String other$sendmanname = other.getSendmanname();
+        if (this$sendmanname == null ? other$sendmanname != null : !this$sendmanname.equals(other$sendmanname)) {
+            return false;
+        }
+        String this$sendmanmobile = this.getSendmanmobile();
+        String other$sendmanmobile = other.getSendmanmobile();
+        if (this$sendmanmobile == null ? other$sendmanmobile != null : !this$sendmanmobile.equals(other$sendmanmobile)) {
+            return false;
+        }
+        String this$sendmanprintaddr = this.getSendmanprintaddr();
+        String other$sendmanprintaddr = other.getSendmanprintaddr();
+        if (this$sendmanprintaddr == null ? other$sendmanprintaddr != null : !this$sendmanprintaddr.equals(other$sendmanprintaddr)) {
+            return false;
+        }
+        String this$cargoname = this.getCargoname();
+        String other$cargoname = other.getCargoname();
+        if (this$cargoname == null ? other$cargoname != null : !this$cargoname.equals(other$cargoname)) {
+            return false;
+        }
+        String this$weight = this.getWeight();
+        String other$weight = other.getWeight();
+        if (this$weight == null ? other$weight != null : !this$weight.equals(other$weight)) {
+            return false;
+        }
+        String this$kuaidicom = this.getKuaidicom();
+        String other$kuaidicom = other.getKuaidicom();
+        if (this$kuaidicom == null ? other$kuaidicom != null : !this$kuaidicom.equals(other$kuaidicom)) {
+            return false;
+        }
+        String this$pickupstarttime = this.getPickupstarttime();
+        String other$pickupstarttime = other.getPickupstarttime();
+        if (this$pickupstarttime == null ? other$pickupstarttime != null : !this$pickupstarttime.equals(other$pickupstarttime)) {
+            return false;
+        }
+        String this$pickupendtime = this.getPickupendtime();
+        String other$pickupendtime = other.getPickupendtime();
+        if (this$pickupendtime == null ? other$pickupendtime != null : !this$pickupendtime.equals(other$pickupendtime)) {
+            return false;
+        }
+        BigDecimal this$payprice = this.getPayprice();
+        BigDecimal other$payprice = other.getPayprice();
+        if (this$payprice == null ? other$payprice != null : !((Object)this$payprice).equals(other$payprice)) {
+            return false;
+        }
+        String this$paytype = this.getPaytype();
+        String other$paytype = other.getPaytype();
+        if (this$paytype == null ? other$paytype != null : !this$paytype.equals(other$paytype)) {
+            return false;
+        }
+        String this$payordernum = this.getPayordernum();
+        String other$payordernum = other.getPayordernum();
+        if (this$payordernum == null ? other$payordernum != null : !this$payordernum.equals(other$payordernum)) {
+            return false;
+        }
+        Date this$createtime = this.getCreatetime();
+        Date other$createtime = other.getCreatetime();
+        if (this$createtime == null ? other$createtime != null : !((Object)this$createtime).equals(other$createtime)) {
+            return false;
+        }
+        Date this$paytime = this.getPaytime();
+        Date other$paytime = other.getPaytime();
+        if (this$paytime == null ? other$paytime != null : !((Object)this$paytime).equals(other$paytime)) {
+            return false;
+        }
+        String this$remark = this.getRemark();
+        String other$remark = other.getRemark();
+        return !(this$remark == null ? other$remark != null : !this$remark.equals(other$remark));
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof AppOrderDetailVo;
+    }
+
+    public int hashCode() {
+        int PRIME = 59;
+        int result = 1;
+        Integer $id = this.getId();
+        result = result * 59 + ($id == null ? 43 : ((Object)$id).hashCode());
+        Integer $userid = this.getUserid();
+        result = result * 59 + ($userid == null ? 43 : ((Object)$userid).hashCode());
+        Integer $daytype = this.getDaytype();
+        result = result * 59 + ($daytype == null ? 43 : ((Object)$daytype).hashCode());
+        Integer $paystatus = this.getPaystatus();
+        result = result * 59 + ($paystatus == null ? 43 : ((Object)$paystatus).hashCode());
+        String $username = this.getUsername();
+        result = result * 59 + ($username == null ? 43 : $username.hashCode());
+        String $ordernum = this.getOrdernum();
+        result = result * 59 + ($ordernum == null ? 43 : $ordernum.hashCode());
+        String $recmanname = this.getRecmanname();
+        result = result * 59 + ($recmanname == null ? 43 : $recmanname.hashCode());
+        String $recmanmobile = this.getRecmanmobile();
+        result = result * 59 + ($recmanmobile == null ? 43 : $recmanmobile.hashCode());
+        String $recmanprintaddr = this.getRecmanprintaddr();
+        result = result * 59 + ($recmanprintaddr == null ? 43 : $recmanprintaddr.hashCode());
+        String $sendmanname = this.getSendmanname();
+        result = result * 59 + ($sendmanname == null ? 43 : $sendmanname.hashCode());
+        String $sendmanmobile = this.getSendmanmobile();
+        result = result * 59 + ($sendmanmobile == null ? 43 : $sendmanmobile.hashCode());
+        String $sendmanprintaddr = this.getSendmanprintaddr();
+        result = result * 59 + ($sendmanprintaddr == null ? 43 : $sendmanprintaddr.hashCode());
+        String $cargoname = this.getCargoname();
+        result = result * 59 + ($cargoname == null ? 43 : $cargoname.hashCode());
+        String $weight = this.getWeight();
+        result = result * 59 + ($weight == null ? 43 : $weight.hashCode());
+        String $kuaidicom = this.getKuaidicom();
+        result = result * 59 + ($kuaidicom == null ? 43 : $kuaidicom.hashCode());
+        String $pickupstarttime = this.getPickupstarttime();
+        result = result * 59 + ($pickupstarttime == null ? 43 : $pickupstarttime.hashCode());
+        String $pickupendtime = this.getPickupendtime();
+        result = result * 59 + ($pickupendtime == null ? 43 : $pickupendtime.hashCode());
+        BigDecimal $payprice = this.getPayprice();
+        result = result * 59 + ($payprice == null ? 43 : ((Object)$payprice).hashCode());
+        String $paytype = this.getPaytype();
+        result = result * 59 + ($paytype == null ? 43 : $paytype.hashCode());
+        String $payordernum = this.getPayordernum();
+        result = result * 59 + ($payordernum == null ? 43 : $payordernum.hashCode());
+        Date $createtime = this.getCreatetime();
+        result = result * 59 + ($createtime == null ? 43 : ((Object)$createtime).hashCode());
+        Date $paytime = this.getPaytime();
+        result = result * 59 + ($paytime == null ? 43 : ((Object)$paytime).hashCode());
+        String $remark = this.getRemark();
+        result = result * 59 + ($remark == null ? 43 : $remark.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "AppOrderDetailVo(id=" + this.getId() + ", username=" + this.getUsername() + ", ordernum=" + this.getOrdernum() + ", userid=" + this.getUserid() + ", recmanname=" + this.getRecmanname() + ", recmanmobile=" + this.getRecmanmobile() + ", recmanprintaddr=" + this.getRecmanprintaddr() + ", sendmanname=" + this.getSendmanname() + ", sendmanmobile=" + this.getSendmanmobile() + ", sendmanprintaddr=" + this.getSendmanprintaddr() + ", cargoname=" + this.getCargoname() + ", weight=" + this.getWeight() + ", kuaidicom=" + this.getKuaidicom() + ", daytype=" + this.getDaytype() + ", pickupstarttime=" + this.getPickupstarttime() + ", pickupendtime=" + this.getPickupendtime() + ", payprice=" + this.getPayprice() + ", paystatus=" + this.getPaystatus() + ", paytype=" + this.getPaytype() + ", payordernum=" + this.getPayordernum() + ", createtime=" + this.getCreatetime() + ", paytime=" + this.getPaytime() + ", remark=" + this.getRemark() + ")";
+    }
+}
