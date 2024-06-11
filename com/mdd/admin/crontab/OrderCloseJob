@@ -1,0 +1,125 @@
+package com.mdd.admin.crontab;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.mdd.common.entity.coupon.Coupon;
+import com.mdd.common.entity.coupon.CouponList;
+import com.mdd.common.entity.order.Order;
+import com.mdd.common.entity.order.OrderGoods;
+import com.mdd.common.enums.CouponEnum;
+import com.mdd.common.enums.OrderEnum;
+import com.mdd.common.enums.OrderLogEnum;
+import com.mdd.common.enums.PaymentEnum;
+import com.mdd.common.mapper.coupon.CouponListMapper;
+import com.mdd.common.mapper.coupon.CouponMapper;
+import com.mdd.common.mapper.goods.GoodsMapper;
+import com.mdd.common.mapper.goods.GoodsSkuMapper;
+import com.mdd.common.mapper.log.LogOrderMapper;
+import com.mdd.common.mapper.order.OrderGoodsMapper;
+import com.mdd.common.mapper.order.OrderMapper;
+import com.mdd.common.util.ConfigUtils;
+import com.mdd.common.util.StringUtils;
+import com.mdd.common.util.TimeUtils;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Component;
+
+@Component(value="orderCloseJob")
+public class OrderCloseJob {
+    @Resource
+    OrderMapper orderMapper;
+    @Resource
+    OrderGoodsMapper orderGoodsMapper;
+    @Resource
+    GoodsMapper goodsMapper;
+    @Resource
+    GoodsSkuMapper goodsSkuMapper;
+    @Resource
+    CouponListMapper couponListMapper;
+    @Resource
+    CouponMapper couponMapper;
+    @Resource
+    LogOrderMapper logOrderMapper;
+
+    public void handle() {
+        try {
+            float cancelTimeConfig = Float.parseFloat(ConfigUtils.get("trade", "cancelUnpaidOrderTime", "-1"));
+            if (cancelTimeConfig == -1.0f) {
+                return;
+            }
+            float confirmTime = cancelTimeConfig * 60.0f;
+            List list = this.orderMapper.selectList((Wrapper)((QueryWrapper)((QueryWrapper)new QueryWrapper().eq("order_status", OrderEnum.ORDER_STATUS_WAIT_PAY.getCode())).eq("pay_is", PaymentEnum.UN_PAID.getCode())).lt("create_time + " + confirmTime, TimeUtils.timestamp()));
+            if (list.isEmpty()) {
+                return;
+            }
+            for (Order order : list) {
+                this.returnInventory(order);
+                this.returnCoupon(order.getCouponListId());
+                this.updateOrderStatus(order);
+            }
+        }
+        catch (Exception exception) {
+            // empty catch block
+        }
+    }
+
+    private void updateOrderStatus(Order order) {
+        order.setOrderStatus(OrderEnum.ORDER_STATUS_CANCEL.getCode());
+        order.setUpdateTime(System.currentTimeMillis() / 1000L);
+        order.setCancelTime(System.currentTimeMillis() / 1000L);
+        this.orderMapper.updateById(order);
+        Integer channel = OrderLogEnum.CHANNEL_SYSTEM_CANCEL_ORDER.getCode();
+        this.logOrderMapper.add(order.getId(), OrderLogEnum.TYPE_SYSTEM.getCode(), channel, 0, OrderLogEnum.getValue(channel));
+    }
+
+    private void returnInventory(Order order) {
+        int returnInventory = Integer.parseInt(ConfigUtils.get("trade", "returnInventory", "0"));
+        if (returnInventory == 1) {
+            List orderGoodsList = this.orderGoodsMapper.selectList((Wrapper)new QueryWrapper().eq("order_id", order.getId()));
+            for (OrderGoods orderGoods : orderGoodsList) {
+                this.goodsSkuMapper.update(null, (Wrapper)((UpdateWrapper)new UpdateWrapper().eq("id", orderGoods.getGoodsSkuId())).setSql("stock = stock + " + orderGoods.getGoodsNum()));
+                this.goodsMapper.update(null, (Wrapper)((UpdateWrapper)new UpdateWrapper().eq("id", orderGoods.getGoodsId())).setSql("total_stock = total_stock+" + orderGoods.getGoodsNum()));
+            }
+        }
+    }
+
+    private void returnCoupon(String couponListId) {
+        if (StringUtils.isNotNull(couponListId)) {
+            return;
+        }
+        List<Integer> integerList = Arrays.asList(couponListId.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+        integerList.forEach(item -> {
+            CouponList couponList = (CouponList)this.couponListMapper.selectById((Serializable)item);
+            if (couponList == null) {
+                return;
+            }
+            Coupon coupon = (Coupon)this.couponMapper.selectById(couponList.getCouponId());
+            if (coupon == null) {
+                return;
+            }
+            if (!coupon.getStatus().equals(CouponEnum.COUPON_STATUS_CONDUCT.getCode())) {
+                return;
+            }
+            couponList.setStatus(CouponEnum.USE_STATUS_VOID.getCode());
+            couponList.setUpdateTime(System.currentTimeMillis() / 1000L);
+            this.couponListMapper.updateById(couponList);
+            String couponCode = this.couponListMapper.randMakeOrderSn("coupon_code");
+            CouponList couponListNew = new CouponList();
+            couponListNew.setChannel(couponList.getChannel());
+            couponListNew.setCouponCode(couponCode);
+            couponListNew.setIssuerId(0);
+            couponListNew.setCouponId(couponList.getCouponId());
+            couponListNew.setOrderId(0);
+            couponListNew.setUserId(couponList.getUserId());
+            couponListNew.setStatus(CouponEnum.USE_STATUS_NOT.getCode());
+            couponListNew.setInvalidTime(couponList.getInvalidTime());
+            couponListNew.setCreateTime(System.currentTimeMillis() / 1000L);
+            couponListNew.setUpdateTime(System.currentTimeMillis() / 1000L);
+            this.couponListMapper.insert(couponListNew);
+        });
+    }
+}
