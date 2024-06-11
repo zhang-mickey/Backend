@@ -1,0 +1,33 @@
+package com.mdd.admin.crontab;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mdd.common.entity.coupon.CouponList;
+import com.mdd.common.enums.CouponEnum;
+import com.mdd.common.mapper.coupon.CouponListMapper;
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Component;
+
+@Component(value="couponListEndJob")
+public class CouponListEndJob {
+    @Resource
+    CouponListMapper couponListMapper;
+
+    public void handle() {
+        try {
+            long currTime = System.currentTimeMillis() / 1000L;
+            List list = this.couponListMapper.selectList((Wrapper)((QueryWrapper)new QueryWrapper().eq("status", CouponEnum.USE_STATUS_NOT.getCode())).le("invalid_time", currTime));
+            if (!list.isEmpty()) {
+                for (CouponList couponList : list) {
+                    couponList.setStatus(CouponEnum.USE_STATUS_EXPIRE.getCode());
+                    couponList.setUpdateTime(System.currentTimeMillis() / 1000L);
+                    this.couponListMapper.updateById(couponList);
+                }
+            }
+        }
+        catch (Exception exception) {
+            // empty catch block
+        }
+    }
+}
