@@ -35,6 +35,16 @@ lsof -i :8080 显示占用8080端口的进程信息
 Spring Boot应用程序从Boot-INF文件夹加载
 
 应用程序类放在嵌套的BOOT-INF/classes目录中。依赖关系放在嵌套的BOOT-INF/lib目录中
+
+## @RestController
+将一个类标记为 RESTful Web 服务的控制器,
+是 @Controller 和 @ResponseBody 注解的组合
+
+## @RequestMapping
+可以用在类级别和方法级别
+
+## @GetMapping
+专门用于处理 HTTP GET 请求的注解。它是 @RequestMapping 的简化版本，专门用于处理 GET 请求
 ## JDBC Java DataBase Connectivity
 使用Java程序访问数据库时，Java代码并不是直接通过TCP连接去访问数据库，而是通过JDBC接口来访问，而JDBC接口则通过JDBC驱动来实现真正对数据库的访问
 ![image](https://github.com/zhang-mickey/android/assets/145342600/efe4ba38-451e-4082-91ce-ff8b6fbe0c7e)
