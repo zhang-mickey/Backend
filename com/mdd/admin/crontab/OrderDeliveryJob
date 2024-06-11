@@ -1,0 +1,14 @@
+package com.mdd.admin.crontab;
+
+import com.mdd.common.mapper.order.OrderMapper;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Component;
+
+@Component(value="orderDeliveryJob")
+public class OrderDeliveryJob {
+    @Resource
+    private OrderMapper orderMapper;
+
+    public void handle() {
+    }
+}
