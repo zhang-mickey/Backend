@@ -1,0 +1,137 @@
+package com.mdd.admin.crontab;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.yulichang.query.MPJQueryWrapper;
+import com.mdd.admin.service.IDistributionStoreService;
+import com.mdd.admin.vo.distribution.DistributionConfigVo;
+import com.mdd.common.config.GlobalConfig;
+import com.mdd.common.entity.distribution.DistributionConfig;
+import com.mdd.common.entity.distribution.DistributionOrder;
+import com.mdd.common.entity.order.Order;
+import com.mdd.common.entity.order.OrderAfter;
+import com.mdd.common.entity.user.User;
+import com.mdd.common.enums.DistributionEnum;
+import com.mdd.common.enums.LogEarningsEnum;
+import com.mdd.common.enums.OrderAfterEnum;
+import com.mdd.common.enums.OrderEnum;
+import com.mdd.common.mapper.distribution.DistributionConfigMapper;
+import com.mdd.common.mapper.distribution.DistributionOrderMapper;
+import com.mdd.common.mapper.log.LogEarningsMapper;
+import com.mdd.common.mapper.order.OrderAfterMapper;
+import com.mdd.common.mapper.order.OrderMapper;
+import com.mdd.common.mapper.user.UserMapper;
+import com.mdd.common.util.StringUtils;
+import com.mdd.common.util.TimeUtils;
+import java.util.LinkedHashMap;
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+
+@Component(value="distributionSettleJob")
+public class DistributionSettleJob {
+    @Resource
+    UserMapper userMapper;
+    @Resource
+    LogEarningsMapper logEarningsMapper;
+    @Resource
+    OrderMapper orderMapper;
+    @Resource
+    OrderAfterMapper orderAfterMapper;
+    @Resource
+    DistributionOrderMapper distributionOrderMapper;
+    @Resource
+    DistributionConfigMapper distributionConfigMapper;
+    @Resource
+    IDistributionStoreService iDistributionStoreService;
+    @Resource
+    DataSourceTransactionManager transactionManager;
+    @Resource
+    TransactionDefinition transactionDefinition;
+
+    public void handle() {
+        DistributionConfigVo config = this.__distributionConfig();
+        if (config.getOpen().equals(0)) {
+            return;
+        }
+        TransactionStatus transactionStatus = this.transactionManager.getTransaction(this.transactionDefinition);
+        try {
+            MPJQueryWrapper mpjQueryWrapper = new MPJQueryWrapper();
+            mpjQueryWrapper.selectAll(DistributionOrder.class);
+            mpjQueryWrapper.eq("t.is_delete", 0);
+            mpjQueryWrapper.eq("t.status", DistributionEnum.ORDER_UN_RETURNED.getCode());
+            mpjQueryWrapper.eq("u.is_delete", 0);
+            mpjQueryWrapper.eq("u.is_close", 0);
+            mpjQueryWrapper.innerJoin("?_user u ON u.id = t.user_id".replace("?_", GlobalConfig.tablePrefix));
+            mpjQueryWrapper.orderByDesc("t.id");
+            mpjQueryWrapper.last("limit 100");
+            List distributionOrderList = this.distributionOrderMapper.selectList(mpjQueryWrapper);
+            for (DistributionOrder distributionOrder : distributionOrderList) {
+                if (!this.__checkAbleSettle(distributionOrder, config)) continue;
+                User user = (User)this.userMapper.selectById(distributionOrder.getUserId());
+                user.setEarnings(user.getEarnings().add(distributionOrder.getEarnings()));
+                user.setUpdateTime(System.currentTimeMillis() / 1000L);
+                this.userMapper.updateById(user);
+                this.logEarningsMapper.add(user.getId(), LogEarningsEnum.UE_INC_DISTRIBUTION_SETTLE.getCode(), distributionOrder.getEarnings(), distributionOrder.getId(), distributionOrder.getSn(), LogEarningsEnum.UE_INC_DISTRIBUTION_SETTLE.getMsg(), null);
+                this.__updateDistributionOrder(distributionOrder.getId(), DistributionEnum.ORDER_RETURNED.getCode());
+                this.iDistributionStoreService.updateDistributionLevel(distributionOrder.getUserId());
+            }
+            this.transactionManager.commit(transactionStatus);
+        }
+        catch (Exception e) {
+            this.transactionManager.rollback(transactionStatus);
+        }
+    }
+
+    private boolean __checkAbleSettle(DistributionOrder distributionOrder, DistributionConfigVo config) {
+        Order order = (Order)this.orderMapper.selectById(distributionOrder.getOrderId());
+        if (config.getSettlementTiming().equals(1)) {
+            if (!order.getOrderStatus().equals(OrderEnum.ORDER_STATUS_COMPLETED.getCode()) && !order.getOrderStatus().equals(OrderEnum.ORDER_STATUS_CANCEL.getCode())) {
+                return false;
+            }
+            List orderAfterList = this.orderAfterMapper.selectList((Wrapper)((QueryWrapper)new QueryWrapper().eq("order_id", order.getId())).eq("is_delete", 0));
+            for (OrderAfter orderAfter : orderAfterList) {
+                if (orderAfter.getAfterStatus().equals(OrderAfterEnum.AFTER_STATUS_ING.getCode())) {
+                    return false;
+                }
+                if (!orderAfter.getAfterStatus().equals(OrderAfterEnum.AFTER_STATUS_SUCCESS.getCode())) continue;
+                this.__updateDistributionOrder(distributionOrder.getId(), DistributionEnum.ORDER_EXPIRED.getCode());
+                return false;
+            }
+            float settleTimeConfig = Float.parseFloat(config.getSettlementTime());
+            Long settleTime = (long)settleTimeConfig * 24L * 60L * 60L;
+            return TimeUtils.timestamp() >= order.getConfirmTime() + settleTime;
+        }
+        return false;
+    }
+
+    private void __updateDistributionOrder(Integer id, Integer status) {
+        DistributionOrder updateDistribution = new DistributionOrder();
+        updateDistribution.setStatus(status);
+        updateDistribution.setSettleTime(System.currentTimeMillis() / 1000L);
+        updateDistribution.setUpdateTime(System.currentTimeMillis() / 1000L);
+        this.distributionOrderMapper.update(updateDistribution, (Wrapper)new QueryWrapper().eq("id", id));
+    }
+
+    private DistributionConfigVo __distributionConfig() {
+        List list = this.distributionConfigMapper.selectList((Wrapper)new QueryWrapper().eq("is_delete", 0));
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        for (DistributionConfig config : list) {
+            map.put(config.getName(), StringUtils.isNotNull(config.getValue()) ? config.getValue().trim() : null);
+        }
+        DistributionConfigVo vo = new DistributionConfigVo();
+        vo.setOpen(Integer.parseInt(map.getOrDefault("open", "0")));
+        vo.setLevel(Integer.parseInt(map.getOrDefault("level", "1")));
+        vo.setIsSelfRebate(Integer.parseInt(map.getOrDefault("isSelfRebate", "0")));
+        vo.setOpenCondition(Integer.parseInt(map.getOrDefault("openCondition", "0")));
+        vo.setProtocolShow(Integer.parseInt(map.getOrDefault("protocolShow", "0")));
+        vo.setProtocolContent(map.getOrDefault("protocolContent", ""));
+        vo.setEarningsCalMethod(Integer.parseInt(map.getOrDefault("earningsCalMethod", "1")));
+        vo.setSettlementTiming(Integer.parseInt(map.getOrDefault("settlementTiming", "1")));
+        vo.setSettlementTime(map.getOrDefault("settlementTime", "0"));
+        return vo;
+    }
+}
