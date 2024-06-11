@@ -51,3 +51,7 @@ HTTP 协议有一个缺陷：通信只能由客户端发起   做不到服务器
 
 **setter方法**
 
+##   class 反编译 
+JD-GUI
+
+.java 文件经过 JAVA编译器（javac）编译成中间代码字节码 .class 文件
