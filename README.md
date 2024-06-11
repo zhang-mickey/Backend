@@ -29,6 +29,16 @@ SQL 的 LIKE 也能实现匹配
 用于 Swagger 文档生成，描述方法的功能。
 ## @ApiModelProperty
 
+# ID
+
+有的业务直接通过 DB 自增的方式生成 ID，有的业务通过 Redis 缓存来生成 ID，也有的业务直接用 UUID 这种方式来生成 ID
+
+## 雪花算法
+
+# Value Object 值对象
+通常是不可变的，这意味着一旦创建，它们的状态不能再被修改。这有助于确保数据的一致性和可靠性
+![image](https://github.com/zhang-mickey/Backend/assets/145342600/9b040632-64d9-4788-ab8d-97835ac84670)
+
 # spring boost
 Spring Initializr Java Support
 
