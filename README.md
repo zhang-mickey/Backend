@@ -22,6 +22,12 @@ SQL 的 LIKE 也能实现匹配
 
 ## Java Agent机制
 
+# Swagger
+## @Api
+用于 Swagger 文档生成，描述该控制器的功能。
+## @ApiOperation
+用于 Swagger 文档生成，描述方法的功能。
+## @ApiModelProperty
 
 # spring boost
 Spring Initializr Java Support
@@ -29,12 +35,15 @@ Spring Initializr Java Support
 
 lsof -i :8080 显示占用8080端口的进程信息
 
+## @Validated
+在方法参数前添加，表示对该参数进行验证
 ## META-INF
 
 ## BOOT-INF
 Spring Boot应用程序从Boot-INF文件夹加载
 
 应用程序类放在嵌套的BOOT-INF/classes目录中。依赖关系放在嵌套的BOOT-INF/lib目录中
+## @RequestBody
 
 ## @RestController
 将一个类标记为 RESTful Web 服务的控制器,
