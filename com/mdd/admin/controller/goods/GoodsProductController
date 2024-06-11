@@ -1,0 +1,119 @@
+package com.mdd.admin.controller.goods;
+
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.mdd.admin.service.IGoodsService;
+import com.mdd.admin.validate.commons.IdValidate;
+import com.mdd.admin.validate.commons.IdsValidate;
+import com.mdd.admin.validate.commons.PageValidate;
+import com.mdd.admin.validate.goods.GoodsCreateValidate;
+import com.mdd.admin.validate.goods.GoodsSearchValidate;
+import com.mdd.admin.validate.goods.GoodsUpdateValidate;
+import com.mdd.admin.vo.goods.GoodsCommonVo;
+import com.mdd.admin.vo.goods.GoodsDetailVo;
+import com.mdd.admin.vo.goods.GoodsListedVo;
+import com.mdd.common.aop.NotPower;
+import com.mdd.common.core.AjaxResult;
+import com.mdd.common.core.PageResult;
+import com.mdd.common.validator.annotation.IDMust;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value={"api/goods/product"})
+@Api(value="商品产品管理")
+public class GoodsProductController {
+    @Resource
+    IGoodsService iGoodsService;
+
+    @NotPower
+    @GetMapping(value={"/common"})
+    @ApiOperation(value="公共商品")
+    public AjaxResult<PageResult<GoodsCommonVo>> common(@Validated PageValidate pageValidate, @Validated GoodsSearchValidate goodsSearchValidate) {
+        PageResult list = this.iGoodsService.common(pageValidate, goodsSearchValidate);
+        return AjaxResult.success(list);
+    }
+
+    @GetMapping(value={"/list"})
+    @ApiOperation(value="商品列表")
+    public AjaxResult<PageResult<GoodsListedVo>> list(@Validated PageValidate pageValidate, @Validated GoodsSearchValidate goodsSearchValidate) {
+        PageResult list = this.iGoodsService.list(pageValidate, goodsSearchValidate);
+        return AjaxResult.success(list);
+    }
+
+    @GetMapping(value={"/detail"})
+    @ApiOperation(value="商品详情")
+    public AjaxResult<Object> detail(@Validated @IDMust @RequestParam(value="id") Integer id) {
+        GoodsDetailVo detail = this.iGoodsService.detail(id);
+        return AjaxResult.success(detail);
+    }
+
+    @PostMapping(value={"/add"})
+    @ApiOperation(value="商品新增")
+    public AjaxResult<Object> add(@Validated @RequestBody GoodsCreateValidate goodsCreateValidate) {
+        this.iGoodsService.add(goodsCreateValidate);
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/edit"})
+    @ApiOperation(value="商品编辑")
+    public AjaxResult<Object> edit(@Validated @RequestBody GoodsUpdateValidate goodsUpdateValidate) {
+        boolean result = this.iGoodsService.edit(goodsUpdateValidate);
+        if (result) {
+            return AjaxResult.success();
+        }
+        return AjaxResult.success("商品信息修改成功,该商品属于分销商品，请重新设置分销信息！");
+    }
+
+    @PostMapping(value={"/del"})
+    @ApiOperation(value="商品删除")
+    public AjaxResult<Object> del(@Validated @RequestBody IdValidate idValidate) {
+        this.iGoodsService.del(idValidate.getId());
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/change"})
+    @ApiOperation(value="商品状态")
+    public AjaxResult<Object> change(@Validated @RequestBody IdValidate idValidate) {
+        this.iGoodsService.change(idValidate.getId());
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/sort"})
+    @ApiOperation(value="商品排序")
+    public AjaxResult<Object> sort(@RequestBody Map<String, Integer> params) {
+        Assert.notNull(params.get("id"), "id参数缺失", new Object[0]);
+        Assert.notNull(params.get("sort"), "sort参数缺失", new Object[0]);
+        this.iGoodsService.sort(params.get("id"), params.get("sort"));
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/batchDelete"})
+    @ApiOperation(value="批量删除")
+    public AjaxResult<Object> batchDelete(@Validated @RequestBody IdsValidate idsValidate) {
+        this.iGoodsService.batchDelete(idsValidate.getIds());
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/batchUpper"})
+    @ApiOperation(value="批量上架")
+    public AjaxResult<Object> batchUpper(@Validated @RequestBody IdsValidate idsValidate) {
+        this.iGoodsService.batchUpper(idsValidate.getIds());
+        return AjaxResult.success();
+    }
+
+    @PostMapping(value={"/batchLower"})
+    @ApiOperation(value="批量下架")
+    public AjaxResult<Object> batchLower(@Validated @RequestBody IdsValidate idsValidate) {
+        this.iGoodsService.batchLower(idsValidate.getIds());
+        return AjaxResult.success();
+    }
+}
