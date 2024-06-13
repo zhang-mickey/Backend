@@ -44,7 +44,8 @@ Spring Initializr Java Support
 
 
 lsof -i :8080 显示占用8080端口的进程信息
-
+## Spring Quartz
+定时任务的调度框架
 ## Spring MVC
 
 ### 拦截器(Interceptor)
