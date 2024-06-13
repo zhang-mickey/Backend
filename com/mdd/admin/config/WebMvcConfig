@@ -1,0 +1,32 @@
+package com.mdd.admin.config;
+
+import com.mdd.admin.LikeAdminInterceptor;
+import com.mdd.common.config.GlobalConfig;
+import com.mdd.common.util.YmlUtils;
+import javax.annotation.Resource;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebMvcConfig
+implements WebMvcConfigurer {
+    @Resource
+    LikeAdminInterceptor likeAdminInterceptor;
+
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins(new String[]{"*"}).allowedHeaders(new String[]{"*"}).allowedMethods(new String[]{"GET", "POST", "DELETE", "PUT"}).maxAge(3600L);
+    }
+
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(this.likeAdminInterceptor).addPathPatterns(new String[]{"/**"});
+    }
+
+    public void addResourceHandlers(@NotNull ResourceHandlerRegistry registry) {
+        String directory = YmlUtils.get("like.upload-directory");
+        registry.addResourceHandler(new String[]{"/" + GlobalConfig.publicPrefix + "/**"}).addResourceLocations(new String[]{"file:" + directory});
+    }
+}
