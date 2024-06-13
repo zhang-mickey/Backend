@@ -44,6 +44,10 @@ Spring Initializr Java Support
 
 
 lsof -i :8080 显示占用8080端口的进程信息
+## 类使用implements关键字实现接口
+一个类可以同时实现多个接口
+
+除非实现接口的类是抽象类，否则该类要定义接口中的所有方法
 
 ## @Validated
 在方法参数前添加，表示对该参数进行验证
