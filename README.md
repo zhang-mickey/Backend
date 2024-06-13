@@ -44,6 +44,13 @@ Spring Initializr Java Support
 
 
 lsof -i :8080 显示占用8080端口的进程信息
+
+## Spring MVC
+
+### 拦截器(Interceptor)
+类似于ServLet中的过滤器(Filter)，它主要用于拦截用户请求并作出相应的处理。例如通过拦截器可以进行权限验证、记录请求信息的日志、判断用户是否登录等。
+
+想要在Spring Boot生效其实很简单，只需要定义一个配置类，实现WebMvcConfigurer这个接口，并且实现其中的addInterceptiors()方法即可
 ## 类使用implements关键字实现接口
 一个类可以同时实现多个接口
 
