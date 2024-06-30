@@ -115,5 +115,9 @@ HTTP 协议有一个缺陷：通信只能由客户端发起   做不到服务器
 
 
 
+![image](https://github.com/zhang-mickey/Backend/assets/145342600/af66c57d-3bdf-46fd-8bdb-b52a8f7945a3)
+
+
+
 
 
